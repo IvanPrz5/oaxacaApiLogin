@@ -32,9 +32,9 @@ public class WebSecurityConfig {
                 .cors()
                 .and()
                 .csrf().disable()
-                .authorizeHttpRequests()
-                .antMatchers("/api/CapitalHumano")
-                .permitAll()
+                .authorizeRequests()
+                /*.antMatchers("/api/CapitalHumano")
+                .permitAll() */
                 .anyRequest()
                 .authenticated()
                 .and()
