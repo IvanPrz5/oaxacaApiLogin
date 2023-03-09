@@ -20,7 +20,7 @@ import com.example.oaxacaApi.Repository.CatalogoStatusRepository;
 
 @CrossOrigin(origins="*", methods = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
 @RestController
-@RequestMapping("/Status")
+@RequestMapping("api/Status")
 public class CatalogoStatusController {
     @Autowired
     private CatalogoStatusRepository catalogoStatusRepository;

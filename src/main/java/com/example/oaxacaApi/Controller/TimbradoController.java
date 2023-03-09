@@ -32,12 +32,14 @@ import com.example.oaxacaApi.Service.TimbradoServicio;
 @CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
         RequestMethod.DELETE })
 @RestController
-@RequestMapping("/Timbrado")
+@RequestMapping("api/Timbrado")
 public class TimbradoController {
     @Autowired
     private TimbradoRepository timbradoRepository;
     @Autowired
     private TimbradoServicio timbradoServicio;
+
+    public String rutaCarpeta = "\\Users\\Propietario\\Pictures\\";
 
     @GetMapping
     public List<TimbradoEntity> getData() {
@@ -57,11 +59,17 @@ public class TimbradoController {
     }
 
     @PostMapping
-    public ResponseEntity<TimbradoEntity> postData(@RequestBody TimbradoEntity data) {
+    public ResponseEntity<TimbradoEntity> postData(@RequestBody TimbradoEntity data, Model model,
+            @RequestParam("file") MultipartFile multipartFile) {
         try {
+            if (!multipartFile.isEmpty()) {
+                byte[] bytes = multipartFile.getBytes();
+                Path path = Paths.get(rutaCarpeta + multipartFile.getOriginalFilename());
+                Files.write(path, bytes);
+                data.setArchivo(rutaCarpeta + multipartFile.getOriginalFilename());
+            }
             TimbradoEntity timbradoEntity = timbradoRepository.save(data);
             return new ResponseEntity<>(timbradoEntity, HttpStatus.CREATED);
-
         } catch (Exception ex) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

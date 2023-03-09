@@ -26,4 +26,8 @@ public class ArchivoEntity {
     private Integer id;
     @Column
     private String file;
+    @Column
+    private String name;
+    @Column
+    private String algo;
 }

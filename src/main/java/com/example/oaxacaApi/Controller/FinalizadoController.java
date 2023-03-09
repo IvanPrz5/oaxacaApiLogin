@@ -23,7 +23,7 @@ import com.example.oaxacaApi.Repository.FinalizadoRepository;
 import com.example.oaxacaApi.Service.FinalizadoService;
 @CrossOrigin(origins="*", methods = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
 @RestController
-@RequestMapping("/Finalizado")
+@RequestMapping("api/Finalizado")
 public class FinalizadoController {
     @Autowired
     private FinalizadoRepository finalizadoRepository;

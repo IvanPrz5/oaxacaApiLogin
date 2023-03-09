@@ -18,7 +18,7 @@ import com.example.oaxacaApi.Repository.CatalogoSNFCRepository;
 
 @CrossOrigin(origins="*", methods = {RequestMethod.GET, RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
 @RestController
-@RequestMapping("/SNFC")
+@RequestMapping("api/SNFC")
 public class CatalogoSNFCController {
     @Autowired
     private CatalogoSNFCRepository catalogoSNFCRepository;
