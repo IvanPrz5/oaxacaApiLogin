@@ -23,12 +23,14 @@ public class TokenUtils {
         Map<String, Object> extra = new HashMap<>();
         extra.put("nombre", nombre);
 
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setSubject(email)
                 .setExpiration(expirationDate)
                 .addClaims(extra)
                 .signWith(Keys.hmacShaKeyFor(ACCESS_TOKEN_SECRET.getBytes()))
                 .compact();
+        
+        return token;
     }
 
     public static UsernamePasswordAuthenticationToken getAuthentication(String token) {

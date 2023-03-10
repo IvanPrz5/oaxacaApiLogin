@@ -27,7 +27,5 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(usernamePat);
         }
         filterChain.doFilter(request, response);
-
     }
-
 }

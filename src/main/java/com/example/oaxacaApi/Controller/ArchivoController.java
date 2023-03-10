@@ -13,7 +13,10 @@ import javax.print.DocFlavor.STRING;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,46 +38,41 @@ public class ArchivoController {
     ArchivoRepository archivoRepository;
 
     public String rutaCarpeta = "\\Users\\Propietario\\Pictures\\";
-
+    
     @PostMapping
-    public ResponseEntity<ArchivoEntity> postData(ArchivoEntity data,
-            @RequestParam("file") MultipartFile multipartFile) throws IOException {
+    public String subirArchivo(@ModelAttribute ArchivoEntity archivoEntity, Model model, @RequestParam("file") MultipartFile multipartFile) {
 
-            if (!multipartFile.isEmpty()) {
+        if (!multipartFile.isEmpty()) {
+            try {
                 byte[] bytes = multipartFile.getBytes();
                 Path path = Paths.get(rutaCarpeta + multipartFile.getOriginalFilename());
                 Files.write(path, bytes);
-                data.setFile(rutaCarpeta + multipartFile.getOriginalFilename());
-                ArchivoEntity archivoEntity = archivoRepository.save(data);
-                return new ResponseEntity<>(archivoEntity, HttpStatus.CREATED);
+                /* archivoRepository.save(ArchivoEntity.builder()
+                        .file(rutaCarpeta + multipartFile.getOriginalFilename()).build()) */;
+                archivoEntity.setFile(rutaCarpeta + multipartFile.getOriginalFilename());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            return null;
-        /* try {
-            ArchivoEntity archivoEntity = archivoRepository.save(data);
-        return new ResponseEntity<>(archivoEntity, HttpStatus.CREATED);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        } */
-        
+        }
+        archivoRepository.save(archivoEntity);
+        return "Se guardo";
     }
+    
+    /* @PostMapping
+    public String subirArchivo(@ModelAttribute @RequestParam("file") MultipartFile multipartFile) {
 
-    /*
-     * public String subirArchivo(@RequestParam("file") MultipartFile multipartFile)
-     * {
-     * 
-     * if (!multipartFile.isEmpty()) {
-     * try {
-     * byte[] bytes = multipartFile.getBytes();
-     * Path path = Paths.get(rutaCarpeta + multipartFile.getOriginalFilename());
-     * Files.write(path, bytes);
-     * // archivoRepository.save(ArchivoEntity.builder().file(rutaCarpeta +
-     * multipartFile.getOriginalFilename()).build());
-     * return "Se guardo";
-     * } catch (IOException e) {
-     * e.printStackTrace();
-     * }
-     * }
-     * return null;
-     * }
-     */
+        if (!multipartFile.isEmpty()) {
+            try {
+                byte[] bytes = multipartFile.getBytes();
+                Path path = Paths.get(rutaCarpeta + multipartFile.getOriginalFilename());
+                Files.write(path, bytes);
+                archivoRepository.save(ArchivoEntity.builder()
+                        .file(rutaCarpeta + multipartFile.getOriginalFilename()).build());
+                return "Se guardo";
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    } */
 }
