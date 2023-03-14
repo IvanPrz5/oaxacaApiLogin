@@ -1,6 +1,6 @@
 package com.example.oaxacaApi.Controller;
 
-import java.lang.ProcessBuilder.Redirect;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.data.domain.Sort;
 
 import com.example.oaxacaApi.Entity.TimbradoEntity;
@@ -59,20 +58,36 @@ public class TimbradoController {
     }
 
     @PostMapping
-    public ResponseEntity<TimbradoEntity> postData(@RequestBody TimbradoEntity data, Model model,
-            @RequestParam("file") MultipartFile multipartFile) {
+    public ResponseEntity<TimbradoEntity> postData(@RequestBody TimbradoEntity data) {
         try {
-            if (!multipartFile.isEmpty()) {
-                byte[] bytes = multipartFile.getBytes();
-                Path path = Paths.get(rutaCarpeta + multipartFile.getOriginalFilename());
-                Files.write(path, bytes);
-                data.setArchivo(rutaCarpeta + multipartFile.getOriginalFilename());
-            }
             TimbradoEntity timbradoEntity = timbradoRepository.save(data);
             return new ResponseEntity<>(timbradoEntity, HttpStatus.CREATED);
+
         } catch (Exception ex) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PutMapping("/archivo/{idTimbrado}")
+    public String actulizarArchivo(@PathVariable("idTimbrado") Integer idTimbrado, @RequestParam("file") MultipartFile multipartFile){
+        Optional <TimbradoEntity> timbradoData = timbradoRepository.findById(idTimbrado);
+        
+        if(!multipartFile.isEmpty() && timbradoData.isPresent()){
+            try {
+                byte[] bytes = multipartFile.getBytes();
+                Path path = Paths.get(rutaCarpeta + multipartFile.getOriginalFilename());
+                Files.write(path, bytes);
+                TimbradoEntity tEntity = timbradoData.get();
+                tEntity.setArchivo(rutaCarpeta + multipartFile.getOriginalFilename());
+                timbradoRepository.save(tEntity);
+                return "Se guardo";
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            return "error";
+        }
+        return null;
     }
 
     @PutMapping("/{idTimbrado}")
@@ -83,7 +98,7 @@ public class TimbradoController {
         if (timbradoData.isPresent()) {
             TimbradoEntity tEntity = timbradoData.get();
             tEntity.setNomina(timbradoEntity.getNomina());
-            tEntity.setArchivo(timbradoEntity.getArchivo());
+            // tEntity.setArchivo(timbradoEntity.getArchivo());
             tEntity.setArchivoTimbrar(timbradoEntity.getArchivoTimbrar());
             tEntity.setTotalEmpleados(timbradoEntity.getTotalEmpleados());
             tEntity.setFechaInicio(timbradoEntity.getFechaInicio());
